@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends 'homepage.html' %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Seat Selection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .screen {
+        background: #ccc;
+        height: 50px;
+        margin: 20px auto;
+        width: 80%;
+        text-align: center;
+        line-height: 50px;
+        font-weight: bold;
+        font-size: x-large;
+        text-align: center;
+    }
+    .seat-layout {
+        display: grid;
+        grid-template-columns: repeat(15, 50px);
+        gap: 5px;
+        justify-content: center;
+    }
+    .seat {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ccc;
+        text-align: center;
+        line-height: 40px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .seat.selected {
+        background: green;
+        color: white;
+    }
+    .seat.occupied {
+        background: red;
+        pointer-events: none;
+    }
+    .payment {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .payment button {
+        background-color: rgb(255, 80, 16);
+        padding: 10px 20px;
+        color: black;
+        font-size: larger;
+        margin-bottom: 20px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+    }
+</style>
+<body data-movie="{{ movie }}" data-hall="{{ hall }}" data-time="{{ time }}">
+    <div>
+    <center><h2>Movie Seat Booking</h2></center>
+    <div class="screen">Screen</div>
+    <div class="seat-layout" id="seatLayout"></div>
+    <div class="payment">
+        <p>Total Price: Rs. <span id="totalPrice">0</span></p>
+
+        {% if not session.get('user') %}
+        <button  onclick="showLoginModal()">Proceed to Payment</button>
+        {% else %}
+        <button id="rzp-button1" disabled>Proceed to Payment</button>
+        {% endif %}
+
+    </div>
+    </div>
+
+    <!-- Sign-In Modal -->
+<div class="modal fade" id="signinModal" tabindex="-1" aria-labelledby="signinModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signinModalLabel">Sign In to Continue</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('signin') }}" method="post">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to Show Modal if User is Not Logged In -->
+<script>
+    function showLoginModal() {
+        var signinModal = new bootstrap.Modal(document.getElementById('signinModal'));
+        signinModal.show();
+    }
+</script>
+
+
+
+    <script>
+        const seatLayout = document.getElementById("seatLayout");
+        const totalPriceEl = document.getElementById("totalPrice");
+        const payButton = document.getElementById("rzp-button1");
+        const seatPrice = 150;
+        let selectedSeats = [];
+        let bookedSeats = [];
+
+        function fetchBookedSeats() {
+            fetch('/get_booked_seats')
+                .then(response => response.json())
+                .then(data => {
+                    bookedSeats = data.bookedSeats;
+                    renderSeats();
+                })
+                .catch(error => console.error("Error fetching booked seats:", error));
+        }
+
+        function renderSeats() {
+            seatLayout.innerHTML = "";
+            for (let i = 1; i <= 100; i++) {
+                const seat = document.createElement("div");
+                seat.classList.add("seat");
+                seat.textContent = i;
+                if (bookedSeats.includes(i)) {
+                    seat.classList.add("occupied");
+                } else {
+                    seat.addEventListener("click", () => toggleSeat(seat, i));
+                }
+                seatLayout.appendChild(seat);
+            }
+        }
+
+        function toggleSeat(seat, seatNumber) {
+            if (seat.classList.contains("selected")) {
+                seat.classList.remove("selected");
+                selectedSeats = selectedSeats.filter(num => num !== seatNumber);
+            } else {
+                seat.classList.add("selected");
+                selectedSeats.push(seatNumber);
+            }
+            updateTotal();
+        }
+
+        function updateTotal() {
+            totalPriceEl.textContent = selectedSeats.length * seatPrice;
+            payButton.disabled = selectedSeats.length === 0;
+        }
+
+        fetchBookedSeats();
+    </script>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+    <script>
+        const movie = document.body.getAttribute("data-movie");
+        const hall = document.body.getAttribute("data-hall");
+        const time = document.body.getAttribute("data-time");
+        document.getElementById('rzp-button1').onclick = function (e) {
+            e.preventDefault();
+            var totalPrice = selectedSeats.length * seatPrice * 100;
+
+            var options = {
+                "key": "rzp_test_YxFqNpnySKudsR",
+                "amount": totalPrice,
+                "currency": "INR",
+                "name": "Movie Ticket Booking",
+                "description": "Movie Seat Selection Payment",
+                "handler": function (response) {
+                    fetch('/store_seats', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature,
+                            selectedSeats: selectedSeats,
+                            total_price: totalPrice / 100
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            fetchBookedSeats();
+                            const total_price = data.total_price;
+                            let seats = encodeURIComponent(JSON.stringify(selectedSeats));
+                            window.location.href = `/success?movie=${encodeURIComponent(movie)}&hall=${encodeURIComponent(hall)}&time=${encodeURIComponent(time)}&selectedSeats=${seats}&razorpay_payment_id=${encodeURIComponent(response.razorpay_payment_id)}&total_price=${encodeURIComponent(total_price)}`;
+                        } else {
+                            alert("Error storing seat details!");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                },
+                "prefill": {
+                    "name": "{{ session.get('user') }}",
+                    "email": "{{ session.get('email') }}",
+                    "contact": "9999999999"
+                },
+                "theme": { "color": "#3399cc" }
+            };
+
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        };
+    </script>
+    {% endblock %}
+</body>
+</html>

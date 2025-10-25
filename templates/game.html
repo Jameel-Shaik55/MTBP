@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sankranthiki Vastunam</title>
+    {% extends 'homepage.html' %}
+</head>
+{% block content %}
+<body>
+
+<div style="background-color:rgb(54, 53, 53)">
+<div style="margin: 0px 9%;">
+<div style="display: flex; width: 100%; flex-shrink: 0; color: white;">
+<div style="margin: 30px 0px;">
+<img style=" width: 220px; height: 350px; border-radius: 10px;" src="https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@star-icon-202203010609.png,lx-24,ly-615,w-29,l-end:l-text,ie-Ny40LzEwICA4Ni4zSyBWb3Rlcw%3D%3D,fs-29,co-FFFFFF,ly-612,lx-70,pa-8_0_0_0,l-end/et00311772-dyqxbymvgu-portrait.jpg" alt="Game Changer">
+</div>
+<div style="margin: 70px 60px;">
+    <h2><b>Game Changer</b></h2>
+    <a href="#"><button style="padding: 2px 10px;">2D, IMAX 2D, 4DX</button></a>
+    <a href="#"><button style="padding: 2px 10px;">Telugu, kannada, Tamil, Hindi, Malayalam</button></a><br><br>
+    <ul style="display:flex; margin-left: 0px;">
+        <span>2h 45m</span>
+        <li style="margin: 0px 30px;">Action, Drama, Political</li>
+        <li style="margin-right: 30px;">UA 13+</li><li>10 Jan, 2025</li>
+    </ul>
+    <a href="{{url_for('moviehall',movie='Game Changer')}}"><button style="background-color: rgb(248, 68, 100); color: white; padding: 10px 30px; border:1px solid rgb(248, 68, 100); border-radius: 8px;">Book tickets</button></a>
+</div>
+</div>
+</div>
+</div>
+<div style="margin: 30px 9%;">
+    <h4><b>About the movie</b></h4>
+    <p> Get ready for RamCharan`s undeniable swag - he`s about to own the screen and slay it like never before!</p>
+    </div>
+</body>
+{% endblock %}
+</html>

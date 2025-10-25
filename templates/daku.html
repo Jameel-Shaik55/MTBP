@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sankranthiki Vastunam</title>
+    {% extends 'homepage.html' %}
+</head>
+{% block content %}
+<body>
+
+<div style="background-color:rgb(54, 53, 53)">
+<div style="margin: 0px 9%;">
+<div style="display: flex; width: 100%; flex-shrink: 0; color: white;">
+<div style="margin: 30px 0px;">
+<img style=" width: 220px; height: 350px; border-radius: 10px;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmKWIqPkGdHt2D9kKx-7ImipZuqU-r8UG_5A&s" alt="Daku"></div>
+<div style="margin: 70px 60px;">
+    <h2><b>Mirai</b></h2>
+    <a href="#"><button style="padding: 2px 10px;">2D</button></a>
+    <a href="#"><button style="padding: 2px 10px;">Telugu</button></a><br><br>
+    <ul style="display:flex; margin-left: 0px;">
+        <span>2h 27m</span>
+        <li style="margin: 0px 30px;">Action, Drama, Thriller</li>
+        <li style="margin-right: 30px;">UA 13+</li><li>12 Jan, 2025</li>
+    </ul>
+    <a href="{{url_for('moviehall',movie='Daaku Maharaaj')}}"><button style="background-color: rgb(248, 68, 100); color: white; padding: 10px 30px; border:1px solid rgb(248, 68, 100); border-radius: 8px;">Book tickets</button></a>
+</div>
+</div>
+</div>
+</div>
+<div style="margin: 30px 9%;">
+    <h4><b>About the movie</b></h4>
+    <p> Daaku Maharaaj is a Telugu movie starring Nandamuri Balakrishna, Urvashi Rautela, Bobby Deol and Shraddha Srinath in prominent roles. It is written and directed by Bobby Kolli.</p>
+    </div>
+</body>
+{% endblock %}
+</html>

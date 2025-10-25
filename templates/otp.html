@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .otp-container {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 350px;
+    }
+    .otp-container h2 {
+      margin: 0 0 10px;
+    }
+    .otp-container p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    .otp-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .otp-inputs input {
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+    }
+    .otp-inputs input:focus {
+      border-color: #ff5678;
+      box-shadow: 0 0 4px rgba(255, 86, 120, 0.5);
+    }
+    .btn-continue {
+      background-color: #ff5678;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn-continue:hover {
+      background-color: #ff304d;
+    }
+  </style>
+</head>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% block body %}{% endblock %}
+<body>
+  <div class="otp-container">
+    <form action="" method="POST">
+      <h2>Verify your Gmail</h2>
+      <p>Enter OTP sent to <strong>{{mail}}</strong></p>
+      <div class="otp-inputs">
+        <input type="text" name="otp1" maxlength="1" class="otp-input">
+        <input type="text" name="otp2" maxlength="1" class="otp-input">
+        <input type="text" name="otp3" maxlength="1" class="otp-input">
+        <input type="text" name="otp4" maxlength="1" class="otp-input">
+        <input type="text" name="otp5" maxlength="1" class="otp-input">
+        <input type="text" name="otp6" maxlength="1" class="otp-input">
+      </div>
+      <button class="btn-continue" type="submit">Continue</button>
+    </form>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const inputs = document.querySelectorAll(".otp-input");
+      
+      inputs.forEach((input, index) => {
+        input.addEventListener("input", (event) => {
+          if (event.inputType === "deleteContentBackward" && index > 0) {
+            inputs[index - 1].focus();
+          } else if (input.value && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
